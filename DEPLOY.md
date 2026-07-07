@@ -14,6 +14,25 @@ Browser ──▶ Caddy (:80/:443) ──▶ Node server (:8080) ──▶ fete_
 
 Use this path for a simple VPS setup. There is no Docker workflow in the supported deployment anymore.
 
+### One-command deployment
+
+If the repo is already on the VPS, you can run the full setup with one command:
+
+```bash
+cd /opt/MDD_Candy
+sudo bash deploy/deploy-vps.sh --domain your-domain.example.com
+```
+
+For first-time setup on a fresh VPS, let the script clone the repo too:
+
+```bash
+sudo bash deploy/deploy-vps.sh \
+    --domain your-domain.example.com \
+    --repo-url <your-repo-url>
+```
+
+Add `--enable-ufw` if you also want the script to open SSH/HTTP/HTTPS and enable the firewall.
+
 ### 1. Provision the server
 
 On an Ubuntu 22.04/24.04 VPS, install the basics:
@@ -34,10 +53,10 @@ sudo apt install -y caddy
 Create the app user and copy the repo onto the server:
 
 ```bash
-sudo useradd --system --create-home --home-dir /opt/fete-store --shell /bin/bash fete || true
-sudo mkdir -p /opt/fete-store
-sudo chown -R fete:fete /opt/fete-store
-cd /opt/fete-store
+sudo useradd --system --create-home --home-dir /opt/MDD_Candy --shell /bin/bash fete || true
+sudo mkdir -p /opt/MDD_Candy
+sudo chown -R fete:fete /opt/MDD_Candy
+cd /opt/MDD_Candy
 sudo -u fete git clone <your-repo-url> .
 ```
 
@@ -46,27 +65,27 @@ sudo -u fete git clone <your-repo-url> .
 The app uses a single SQLite file. Create it once:
 
 ```bash
-cd /opt/fete-store
+cd /opt/MDD_Candy
 node db/init-sqlite.cjs
 ```
 
-This creates the database file at /opt/fete-store/fete_store.db with schema and demo data.
+This creates the database file at /opt/MDD_Candy/fete_store.db with schema and demo data.
 
 ### 3. Build the frontend and install server dependencies
 
 ```bash
-cd /opt/fete-store/frontend
+cd /opt/MDD_Candy/frontend
 npm install
 npm run build
 
-cd /opt/fete-store/server
+cd /opt/MDD_Candy/server
 npm install
 ```
 
 ### 4. Run the app as a service
 
 ```bash
-sudo cp /opt/fete-store/deploy/fete-store.service /etc/systemd/system/fete-store.service
+sudo cp /opt/MDD_Candy/deploy/fete-store.service /etc/systemd/system/fete-store.service
 sudo systemctl daemon-reload
 sudo systemctl enable --now fete-store
 journalctl -u fete-store -f
@@ -83,7 +102,7 @@ your-domain.example.com {
         reverse_proxy 127.0.0.1:8080
     }
 
-    root * /opt/fete-store/frontend/dist
+    root * /opt/MDD_Candy/frontend/dist
     try_files {path} {path}/ /index.html
     file_server
 }
@@ -105,7 +124,7 @@ Visit https://your-domain.example.com and log in with alice@charity.org / 1234.
 ## Updating after code changes
 
 ```bash
-cd /opt/fete-store && git pull
+cd /opt/MDD_Candy && git pull
 cd frontend && npm install && npm run build
 cd ../server && npm install
 sudo systemctl restart fete-store
@@ -114,10 +133,10 @@ sudo systemctl reload caddy
 
 ## Backing up the database
 
-The whole database is one file: /opt/fete-store/fete_store.db. Back it up while the app is stopped or use SQLite's online backup:
+The whole database is one file: /opt/MDD_Candy/fete_store.db. Back it up while the app is stopped or use SQLite's online backup:
 
 ```bash
-sqlite3 /opt/fete-store/fete_store.db ".backup /opt/backups/fete_store-$(date +%F).db"
+sqlite3 /opt/MDD_Candy/fete_store.db ".backup /opt/backups/fete_store-$(date +%F).db"
 ```
 
 ## Local development

@@ -15,8 +15,8 @@ After=network.target
 [Service]
 Type=simple
 User=fete
-WorkingDirectory=/opt/fete-store/server
-EnvironmentFile=/opt/fete-store/server/.env
+WorkingDirectory=/opt/MDD_Candy/server
+EnvironmentFile=/opt/MDD_Candy/server/.env
 ExecStart=/usr/bin/npm run start
 Restart=on-failure
 RestartSec=5
