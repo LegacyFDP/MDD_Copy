@@ -1,51 +1,5 @@
-services:
-  # Node.js/Express backend server (SQLite file lives in the fete_data volume)
-  backend:
-    build:
-      context: .
-      dockerfile: Dockerfile.backend
-    container_name: fete-store-backend
-    environment:
-      DB_PATH: /data/fete_store.db
-      PORT: 8080
-      HOST: 0.0.0.0
-      NODE_ENV: ${NODE_ENV:-production}
-    volumes:
-      - fete_data:/data
-    ports:
-      # Bound to localhost only — nginx is the public entry point (80/443).
-      - "127.0.0.1:8080:8080"
-    networks:
-      - fete-network
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/api/health"]
-      interval: 30s
-      timeout: 3s
-      retries: 3
-      start_period: 10s
+# Legacy Docker Compose file.
+# This project now uses a single Node process plus Caddy on the VPS.
+# Docker is no longer part of the supported deployment path.
 
-  # Nginx reverse proxy + frontend static files
-  nginx:
-    build:
-      context: .
-      dockerfile: Dockerfile.frontend
-    container_name: fete-store-proxy
-    ports:
-      - "80:80"
-      - "443:443"
-    depends_on:
-      - backend
-    networks:
-      - fete-network
-    volumes:
-      - ./deploy/nginx.conf:/etc/nginx/conf.d/default.conf:ro
-    restart: unless-stopped
-    
-
-networks:
-  fete-network:
-    driver: bridge
-
-volumes:
-  fete_data:
+services: {}

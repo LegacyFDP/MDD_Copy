@@ -1,0 +1,9 @@
+your-domain.example.com {
+    handle /api* {
+        reverse_proxy 127.0.0.1:8080
+    }
+
+    root * /opt/fete-store/frontend/dist
+    try_files {path} {path}/ /index.html
+    file_server
+}
