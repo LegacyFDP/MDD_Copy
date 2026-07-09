@@ -4,7 +4,7 @@ set -euo pipefail
 
 APP_USER="fete"
 APP_GROUP="fete"
-APP_ROOT="/opt/MDD_Candy"
+APP_ROOT="/home/fete/projects/MDD_Candy"
 SERVICE_NAME="mdd-candy"
 SERVICE_PATH="/etc/systemd/system/${SERVICE_NAME}.service"
 CADDYFILE_PATH="/etc/caddy/Caddyfile"
@@ -117,11 +117,12 @@ install_base_packages() {
 ensure_app_user() {
   log "Ensuring application user and root directory exist"
   if ! id -u "${APP_USER}" >/dev/null 2>&1; then
-    useradd --system --create-home --home-dir "${APP_ROOT}" --shell /bin/bash "${APP_USER}"
+    useradd --system --create-home --home-dir "/home/${APP_USER}" --shell /bin/bash "${APP_USER}"
   fi
 
+  mkdir -p "$(dirname "${APP_ROOT}")"
   mkdir -p "${APP_ROOT}"
-  chown -R "${APP_USER}:${APP_GROUP}" "${APP_ROOT}"
+  chown -R "${APP_USER}:${APP_GROUP}" "$(dirname "${APP_ROOT}")"
 }
 
 sync_repo() {

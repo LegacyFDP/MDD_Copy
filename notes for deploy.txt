@@ -1,7 +1,7 @@
-rsync cli rsync -avz --progress "/cygdrive/ " timmi@217.154.60.212:/opt/MDD_Candy/
+rsync cli rsync -avz --progress "/cygdrive/ " timmi@217.154.60.212:/home/fete/projects/MDD_Candy/
 
 
-sudo chown -R timmi:timmi /opt/MDD_Candy
+sudo chown -R timmi:timmi /home/fete/projects/MDD_Candy
 # Create database and user
 sudo -u postgres psql <<'SQL'
 CREATE USER timmi WITH PASSWORD 'paVxm7GjO';
@@ -9,5 +9,5 @@ CREATE DATABASE timmi OWNER fete_user;
 SQL
 
 # Import schema and seed data
-psql "postgres://fete_user:paVxm7GjO@localhost:5432/fete_store" -f /opt/MDD_Candy/db/schema.sql
-psql "postgres://fete_user:paVxm7GjO@localhost:5432/fete_store" -f /opt/MDD_Candy/db/seed.sql
+psql "postgres://fete_user:paVxm7GjO@localhost:5432/fete_store" -f /home/fete/projects/MDD_Candy/db/schema.sql
+psql "postgres://fete_user:paVxm7GjO@localhost:5432/fete_store" -f /home/fete/projects/MDD_Candy/db/seed.sql

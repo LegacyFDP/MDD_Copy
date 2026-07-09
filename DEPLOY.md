@@ -19,7 +19,7 @@ Use this path for a simple VPS setup. There is no Docker workflow in the support
 If the repo is already on the VPS, you can run the full setup with one command:
 
 ```bash
-cd /opt/MDD_Candy
+cd ~/projects/MDD_Candy
 sudo bash deploy/deploy-vps.sh --domain fete.oxongroup.co.uk
 ```
 
@@ -53,10 +53,10 @@ sudo apt install -y caddy
 Create the app user and copy the repo onto the server:
 
 ```bash
-sudo useradd --system --create-home --home-dir /opt/MDD_Candy --shell /bin/bash fete || true
-sudo mkdir -p /opt/MDD_Candy
-sudo chown -R fete:fete /opt/MDD_Candy
-cd /opt/MDD_Candy
+sudo useradd --system --create-home --home-dir /home/fete --shell /bin/bash fete || true
+sudo mkdir -p /home/fete/projects/MDD_Candy
+sudo chown -R fete:fete /home/fete/projects
+cd /home/fete/projects/MDD_Candy
 sudo -u fete git clone https://github.com/LegacyFDP/MDD_Copy .
 ```
 
@@ -65,27 +65,27 @@ sudo -u fete git clone https://github.com/LegacyFDP/MDD_Copy .
 The app uses a single SQLite file. Create it once:
 
 ```bash
-cd /opt/MDD_Candy
+cd ~/projects/MDD_Candy
 node db/init-sqlite.cjs
 ```
 
-This creates the database file at /opt/MDD_Candy/MDD_Candy.db with schema and demo data.
+This creates the database file at /home/fete/projects/MDD_Candy/MDD_Candy.db with schema and demo data.
 
 ### 3. Build the frontend and install server dependencies
 
 ```bash
-cd /opt/MDD_Candy/frontend
+cd ~/projects/MDD_Candy/frontend
 npm install
 npm run build
 
-cd /opt/MDD_Candy/server
+cd ~/projects/MDD_Candy/server
 npm install
 ```
 
 ### 4. Run the app as a service
 
 ```bash
-sudo cp /opt/MDD_Candy/deploy/mdd-candy.service /etc/systemd/system/mdd-candy.service
+sudo cp /home/fete/projects/MDD_Candy/deploy/mdd-candy.service /etc/systemd/system/mdd-candy.service
 sudo systemctl daemon-reload
 sudo systemctl enable --now mdd-candy
 journalctl -u mdd-candy -f
@@ -102,7 +102,7 @@ fete.oxongroup.co.uk {
         reverse_proxy 127.0.0.1:8080
     }
 
-    root * /opt/MDD_Candy/frontend/dist
+    root * /home/fete/projects/MDD_Candy/frontend/dist
     try_files {path} {path}/ /index.html
     file_server
 }
@@ -124,7 +124,7 @@ Visit fete.oxongroup.co.uk and log in with alice@charity.org / 1234.
 ## Updating after code changes
 
 ```bash
-cd /opt/MDD_Candy && git pull
+cd ~/projects/MDD_Candy && git pull
 cd frontend && npm install && npm run build
 cd ../server && npm install
 sudo systemctl restart mdd-candy
@@ -133,10 +133,10 @@ sudo systemctl reload caddy
 
 ## Backing up the database
 
-The whole database is one file: /opt/MDD_Candy/MDD_Candy.db. Back it up while the app is stopped or use SQLite's online backup:
+The whole database is one file: /home/fete/projects/MDD_Candy/MDD_Candy.db. Back it up while the app is stopped or use SQLite's online backup:
 
 ```bash
-sqlite3 /opt/MDD_Candy/MDD_Candy.db ".backup /opt/backups/MDD_Candy-$(date +%F).db"
+sqlite3 /home/fete/projects/MDD_Candy/MDD_Candy.db ".backup /home/fete/backups/MDD_Candy-$(date +%F).db"
 ```
 
 ## Local development
