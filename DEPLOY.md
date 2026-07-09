@@ -53,23 +53,24 @@ sudo apt install -y caddy
 Create the app user and copy the repo onto the server:
 
 ```bash
-sudo useradd --system --create-home --home-dir /home/fete --shell /bin/bash fete || true
-sudo mkdir -p /home/fete/projects/MDD_Candy
-sudo chown -R fete:fete /home/fete/projects
-cd /home/fete/projects/MDD_Candy
-sudo -u fete git clone https://github.com/LegacyFDP/MDD_Copy .
+sudo useradd --system --create-home --home-dir /home/timmi --shell /bin/bash timmi || true
+sudo mkdir -p /home/timmi/projects/MDD_Candy
+sudo chown -R timmi:timmi /home/timmi/projects
+cd /home/timmi/projects/MDD_Candy
+sudo -u timmi git clone https://github.com/LegacyFDP/MDD_Copy .
 ```
 
 ### 2. Create the database
 
-The app uses a single SQLite file. Create it once:
+The app uses a single SQLite file. Install root dependencies first (this provides sqlite3), then create the database:
 
 ```bash
 cd ~/projects/MDD_Candy
+npm install
 node db/init-sqlite.cjs
 ```
 
-This creates the database file at /home/fete/projects/MDD_Candy/MDD_Candy.db with schema and demo data.
+This creates the database file at /home/timmi/projects/MDD_Candy/MDD_Candy.db with schema and demo data.
 
 ### 3. Build the frontend and install server dependencies
 
@@ -85,7 +86,7 @@ npm install
 ### 4. Run the app as a service
 
 ```bash
-sudo cp /home/fete/projects/MDD_Candy/deploy/mdd-candy.service /etc/systemd/system/mdd-candy.service
+sudo cp /home/timmi/projects/MDD_Candy/deploy/mdd-candy.service /etc/systemd/system/mdd-candy.service
 sudo systemctl daemon-reload
 sudo systemctl enable --now mdd-candy
 journalctl -u mdd-candy -f
@@ -102,7 +103,7 @@ fete.oxongroup.co.uk {
         reverse_proxy 127.0.0.1:8080
     }
 
-    root * /home/fete/projects/MDD_Candy/frontend/dist
+    root * /home/timmi/projects/MDD_Candy/frontend/dist
     try_files {path} {path}/ /index.html
     file_server
 }
@@ -133,10 +134,10 @@ sudo systemctl reload caddy
 
 ## Backing up the database
 
-The whole database is one file: /home/fete/projects/MDD_Candy/MDD_Candy.db. Back it up while the app is stopped or use SQLite's online backup:
+The whole database is one file: /home/timmi/projects/MDD_Candy/MDD_Candy.db. Back it up while the app is stopped or use SQLite's online backup:
 
 ```bash
-sqlite3 /home/fete/projects/MDD_Candy/MDD_Candy.db ".backup /home/fete/backups/MDD_Candy-$(date +%F).db"
+sqlite3 /home/timmi/projects/MDD_Candy/MDD_Candy.db ".backup /home/timmi/backups/MDD_Candy-$(date +%F).db"
 ```
 
 ## Local development

@@ -14,9 +14,9 @@ After=network.target
 
 [Service]
 Type=simple
-User=fete
-WorkingDirectory=/home/fete/projects/MDD_Candy/server
-EnvironmentFile=/home/fete/projects/MDD_Candy/server/.env
+User=timmi
+WorkingDirectory=/home/timmi/projects/MDD_Candy/server
+EnvironmentFile=/home/timmi/projects/MDD_Candy/server/.env
 ExecStart=/usr/bin/npm run start
 Restart=on-failure
 RestartSec=5

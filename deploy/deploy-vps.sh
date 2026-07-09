@@ -2,9 +2,9 @@
 
 set -euo pipefail
 
-APP_USER="fete"
-APP_GROUP="fete"
-APP_ROOT="/home/fete/projects/MDD_Candy"
+APP_USER="timmi"
+APP_GROUP="timmi"
+APP_ROOT="/home/timmi/projects/MDD_Candy"
 SERVICE_NAME="mdd-candy"
 SERVICE_PATH="/etc/systemd/system/${SERVICE_NAME}.service"
 CADDYFILE_PATH="/etc/caddy/Caddyfile"
@@ -156,6 +156,12 @@ init_database() {
   chown "${APP_USER}:${APP_GROUP}" "${APP_ROOT}/MDD_Candy.db"
 }
 
+install_root_dependencies() {
+  log "Installing root dependencies"
+  cd "${APP_ROOT}"
+  run_as_app_user npm install
+}
+
 install_dependencies_and_build() {
   log "Installing frontend dependencies and building assets"
   cd "${APP_ROOT}/frontend"
@@ -225,6 +231,7 @@ main() {
   ensure_app_user
   sync_repo
   ensure_server_env
+  install_root_dependencies
   init_database
   install_dependencies_and_build
   install_systemd_service
