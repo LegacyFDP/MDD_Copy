@@ -1,5 +1,6 @@
 const sqlite3 = require('sqlite3')
 const path = require('node:path')
+const fs = require('node:fs')
 
 const here = __dirname
 // DB_PATH mirrors server/src/db.ts so containerized first-run init writes to
@@ -8,12 +9,16 @@ const dbPath = process.env.DB_PATH
   ? path.resolve(process.env.DB_PATH)
   : path.resolve(here, '..', 'MDD_Candy.db')
 
-const db = new sqlite3.Database(dbPath, (err) => {
-  if (err) {
-    console.error('Database connection error:', err)
-    process.exit(1)
-  }
-})
+function openDb() {
+  return new sqlite3.Database(dbPath, (err) => {
+    if (err) {
+      console.error('Database connection error:', err)
+      process.exit(1)
+    }
+  })
+}
+
+let db = openDb()
 
 async function runSQL(sql) {
   return new Promise((resolve, reject) => {
@@ -33,11 +38,57 @@ function tableHasRows(table) {
   })
 }
 
+function isCorruptError(err) {
+  const msg = String((err && err.message) || err || '')
+  return msg.includes('SQLITE_CORRUPT') || msg.includes('database disk image is malformed')
+}
+
+function dbGet(sql, params = []) {
+  return new Promise((resolve, reject) => {
+    db.get(sql, params, (err, row) => {
+      if (err) reject(err)
+      else resolve(row)
+    })
+  })
+}
+
+function closeDb() {
+  return new Promise((resolve, reject) => {
+    db.close((err) => {
+      if (err) reject(err)
+      else resolve()
+    })
+  })
+}
+
+async function guardAgainstCorruptDb() {
+  if (!fs.existsSync(dbPath)) return
+
+  try {
+    await dbGet('PRAGMA integrity_check;')
+  } catch (err) {
+    if (!isCorruptError(err)) throw err
+
+    const stamp = new Date().toISOString().replace(/[:.]/g, '-')
+    const backupPath = `${dbPath}.corrupt-${stamp}.bak`
+
+    console.warn(`⚠ Detected corrupt SQLite database at ${dbPath}`)
+    await closeDb()
+    fs.copyFileSync(dbPath, backupPath)
+    fs.unlinkSync(dbPath)
+    console.warn(`⚠ Backed up corrupt DB to ${backupPath}`)
+
+    db = openDb()
+  }
+}
+
 async function init() {
   try {
+    await guardAgainstCorruptDb()
+
     if (await tableHasRows('fete_users')) {
       console.log(`Database at ${dbPath} already has data — skipping (this script is one-time setup only).`)
-      db.close()
+      await closeDb()
       return
     }
 
@@ -179,7 +230,7 @@ INSERT INTO fete_requirements (fete_id, asset_id, quantity_needed, notes) VALUES
     console.log('✓ Seed data loaded')
 
     console.log('✅ Database initialized successfully!')
-    db.close()
+    await closeDb()
   } catch (err) {
     console.error('❌ Initialization failed:', err.message)
     db.close((closeErr) => {
