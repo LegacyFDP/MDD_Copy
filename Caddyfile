@@ -1,5 +1,5 @@
 fete.oxongroup.co.uk {
-    handle_path /api/* {
+    handle /api/* {
         reverse_proxy 127.0.0.1:8080
     }
 

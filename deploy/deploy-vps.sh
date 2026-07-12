@@ -193,7 +193,7 @@ write_caddyfile() {
   log "Writing Caddy configuration"
   cat > "${CADDYFILE_PATH}" <<EOF
 ${DOMAIN} {
-  handle_path /api/* {
+  handle /api/* {
         reverse_proxy 127.0.0.1:8080
     }
 
