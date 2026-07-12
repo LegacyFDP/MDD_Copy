@@ -193,13 +193,15 @@ write_caddyfile() {
   log "Writing Caddy configuration"
   cat > "${CADDYFILE_PATH}" <<EOF
 ${DOMAIN} {
-    handle /api* {
+  handle_path /api/* {
         reverse_proxy 127.0.0.1:8080
     }
 
+  handle {
     root * ${APP_ROOT}/frontend/dist
     try_files {path} {path}/ /index.html
     file_server
+  }
 }
 EOF
 
