@@ -6,7 +6,7 @@ import { Label } from '../lib/shadcn/label'
 import { Badge } from '../lib/shadcn/badge'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../lib/shadcn/dialog'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../lib/shadcn/select'
-import { Plus, Pencil, Trash2, Shield, User, Calendar } from 'lucide-react'
+import { Plus, Pencil, Trash2, Shield, User, Calendar, Eye, EyeOff } from 'lucide-react'
 import type { AppUser } from './Login'
 
 interface Props { currentUser: AppUser }
@@ -45,6 +45,7 @@ export default function UsersPage({ currentUser }: Props) {
 
   const [open, setOpen] = useState(false)
   const [editId, setEditId] = useState<number | null>(null)
+  const [showPin, setShowPin] = useState(false)
   const [form, setForm] = useState<Partial<FeteUser>>({
     name: '', email: '', role: 'user', pin: ''
   })
@@ -62,12 +63,14 @@ export default function UsersPage({ currentUser }: Props) {
   function openNew() {
     setForm({ name: '', email: '', role: 'user', pin: '' })
     setEditId(null)
+    setShowPin(false)
     setOpen(true)
   }
 
   function openEdit(u: FeteUser) {
     setForm({ id: u.id, name: u.name, email: u.email, role: u.role, pin: u.pin })
     setEditId(u.id)
+    setShowPin(false)
     setOpen(true)
   }
 
@@ -162,12 +165,22 @@ export default function UsersPage({ currentUser }: Props) {
             </div>
             <div className="space-y-1">
               <Label>PIN (up to 6 digits)</Label>
-              <Input
-                type="password"
-                maxLength={6}
-                value={form.pin ?? ''}
-                onChange={e => setForm(f => ({ ...f, pin: e.target.value }))}
-                placeholder="••••" />
+              <div className="relative">
+                <Input
+                  type={showPin ? 'text' : 'password'}
+                  maxLength={6}
+                  className="pr-10"
+                  value={form.pin ?? ''}
+                  onChange={e => setForm(f => ({ ...f, pin: e.target.value }))}
+                  placeholder="••••" />
+                <button
+                  type="button"
+                  className="absolute inset-y-0 right-0 px-3 text-muted-foreground hover:text-foreground"
+                  onClick={() => setShowPin((v) => !v)}
+                  aria-label={showPin ? 'Hide PIN' : 'Show PIN'}>
+                  {showPin ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
             </div>
           </div>
           <DialogFooter>
