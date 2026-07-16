@@ -168,6 +168,22 @@ CREATE TABLE IF NOT EXISTS fete_requirements (
   quantity_needed  INTEGER NOT NULL,
   notes            TEXT    NOT NULL DEFAULT ''
 );
+
+CREATE TABLE IF NOT EXISTS volunteers (
+  id            INTEGER PRIMARY KEY AUTOINCREMENT,
+  name          TEXT NOT NULL,
+  email         TEXT NOT NULL UNIQUE,
+  address_line1 TEXT NOT NULL DEFAULT '',
+  address_line2 TEXT NOT NULL DEFAULT '',
+  town_city     TEXT NOT NULL DEFAULT '',
+  county        TEXT NOT NULL DEFAULT '',
+  postcode      TEXT NOT NULL DEFAULT '',
+  phone_home    TEXT NOT NULL DEFAULT '',
+  phone_mobile  TEXT NOT NULL DEFAULT '',
+  skills        TEXT NOT NULL DEFAULT '',
+  notes         TEXT NOT NULL DEFAULT '',
+  created_at    TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
     `
 
     await runSQL(schema)
@@ -233,6 +249,46 @@ INSERT INTO fete_requirements (fete_id, asset_id, quantity_needed, notes) VALUES
   (1, 2, 40, 'Seating'),
   (1, 3, 2,  'Shade for cake stall'),
   (1, 4, 10, 'Decorate fence line');
+
+INSERT INTO volunteers (
+  name,
+  email,
+  address_line1,
+  address_line2,
+  town_city,
+  county,
+  postcode,
+  phone_home,
+  phone_mobile,
+  skills,
+  notes
+) VALUES
+  (
+    'Eve Evans',
+    'eve.evans@example.org',
+    '7 High Street',
+    '',
+    'Oxford',
+    'Oxfordshire',
+    'OX1 4AB',
+    '01865 123456',
+    '07700 900111',
+    'Baking, till operation, first aid',
+    'Prefers morning shifts.'
+  ),
+  (
+    'Frank Foster',
+    'frank.foster@example.org',
+    'Flat 2, 18 River Road',
+    '',
+    'Abingdon',
+    'Oxfordshire',
+    'OX14 5CD',
+    '01235 998877',
+    '07700 900222',
+    'Heavy lifting, setup crew',
+    ''
+  );
     `
     
     await runSQL(seed)

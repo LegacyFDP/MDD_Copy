@@ -14,3 +14,64 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
 }
+
+.print-only-footer {
+  display: none;
+}
+
+@media print {
+  .print-hidden {
+    display: none !important;
+  }
+
+  .print-page {
+    background: white !important;
+    color: black !important;
+    padding: 0 !important;
+  }
+
+  .print-card {
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  .print-header {
+    padding-bottom: 0.5rem !important;
+  }
+
+  .print-break-after {
+    page-break-after: always;
+    break-after: page;
+  }
+
+  .print-avoid-break {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .print-only-footer {
+    display: block !important;
+  }
+
+  body[data-print-section='print-events'] .print-section:not(#print-events),
+  body[data-print-section='print-volunteers'] .print-section:not(#print-volunteers),
+  body[data-print-section='print-locations'] .print-section:not(#print-locations),
+  body[data-print-section='print-assets'] .print-section:not(#print-assets) {
+    display: none !important;
+  }
+
+  body[data-print-section='print-events'] #card-print-volunteers,
+  body[data-print-section='print-events'] #card-print-locations,
+  body[data-print-section='print-events'] #card-print-assets,
+  body[data-print-section='print-volunteers'] #card-print-events,
+  body[data-print-section='print-volunteers'] #card-print-locations,
+  body[data-print-section='print-volunteers'] #card-print-assets,
+  body[data-print-section='print-locations'] #card-print-events,
+  body[data-print-section='print-locations'] #card-print-volunteers,
+  body[data-print-section='print-locations'] #card-print-assets,
+  body[data-print-section='print-assets'] #card-print-events,
+  body[data-print-section='print-assets'] #card-print-volunteers,
+  body[data-print-section='print-assets'] #card-print-locations {
+    display: none !important;
+  }
+}

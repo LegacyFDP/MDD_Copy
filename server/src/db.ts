@@ -55,6 +55,52 @@ async function runWithMeta(
 }
 
 export async function ensureRuntimeSchema(database: sqlite3.Database = db): Promise<void> {
+  await run(
+    `
+      CREATE TABLE IF NOT EXISTS volunteers (
+        id            INTEGER PRIMARY KEY AUTOINCREMENT,
+        name          TEXT NOT NULL,
+        email         TEXT NOT NULL UNIQUE,
+        address_line1 TEXT NOT NULL DEFAULT '',
+        address_line2 TEXT NOT NULL DEFAULT '',
+        town_city     TEXT NOT NULL DEFAULT '',
+        county        TEXT NOT NULL DEFAULT '',
+        postcode      TEXT NOT NULL DEFAULT '',
+        phone_home    TEXT NOT NULL DEFAULT '',
+        phone_mobile  TEXT NOT NULL DEFAULT '',
+        skills        TEXT NOT NULL DEFAULT '',
+        notes         TEXT NOT NULL DEFAULT '',
+        created_at    TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+      )
+    `,
+    [],
+    database,
+  )
+
+  const volunteerColumns = await all<{ name: string }>('PRAGMA table_info(volunteers);', [], database)
+  const volunteerExisting = new Set(volunteerColumns.map((column) => column.name))
+  const volunteerAdditions = [
+    { name: 'address_line1', sqlType: "TEXT NOT NULL DEFAULT ''" },
+    { name: 'address_line2', sqlType: "TEXT NOT NULL DEFAULT ''" },
+    { name: 'town_city', sqlType: "TEXT NOT NULL DEFAULT ''" },
+    { name: 'county', sqlType: "TEXT NOT NULL DEFAULT ''" },
+    { name: 'postcode', sqlType: "TEXT NOT NULL DEFAULT ''" },
+    { name: 'phone_home', sqlType: "TEXT NOT NULL DEFAULT ''" },
+    { name: 'phone_mobile', sqlType: "TEXT NOT NULL DEFAULT ''" },
+    { name: 'skills', sqlType: "TEXT NOT NULL DEFAULT ''" },
+    { name: 'notes', sqlType: "TEXT NOT NULL DEFAULT ''" },
+  ]
+
+  for (const addition of volunteerAdditions) {
+    if (volunteerExisting.has(addition.name)) continue
+    await run(
+      `ALTER TABLE volunteers ADD COLUMN ${addition.name} ${addition.sqlType};`,
+      [],
+      database,
+    )
+    console.log(`Added missing volunteers column: ${addition.name}`)
+  }
+
   const locationColumns = await all<{ name: string }>('PRAGMA table_info(store_locations);', [], database)
   const locationExisting = new Set(locationColumns.map((column) => column.name))
 

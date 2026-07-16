@@ -1,7 +1,9 @@
 import { useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { useGetAssets, useGetWithdrawals, useGetFetes } from '../hooks/backend/fete'
+import { Button } from '../lib/shadcn/button'
 import { Card, CardContent, CardHeader, CardTitle } from '../lib/shadcn/card'
-import { Package, ArrowUpFromLine, Tent, AlertTriangle } from 'lucide-react'
+import { Package, ArrowUpFromLine, Tent, AlertTriangle, Printer } from 'lucide-react'
 import type { AppUser } from './Login'
 
 interface Props { currentUser: AppUser }
@@ -140,6 +142,24 @@ export default function Dashboard({ currentUser }: Props) {
           </CardContent>
         </Card>
       </div>
+
+      {currentUser.role === 'admin' && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base flex items-center gap-2">
+              <Printer className="w-4 h-4" /> Printable Lists
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="flex items-center justify-between gap-3 flex-wrap">
+            <p className="text-sm text-muted-foreground">
+              Produce print-ready lists for events, volunteers, locations, and assets by type.
+            </p>
+            <Button asChild>
+              <Link to="/print-lists">Open Print Centre</Link>
+            </Button>
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 }
