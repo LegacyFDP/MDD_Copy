@@ -4,6 +4,7 @@ import Login, { type AppUser } from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import AssetsPage from './pages/AssetsPage'
 import FetesPage from './pages/FetesPage'
+import FeteEventsPage from './pages/FeteEventsPage'
 import WithdrawalsPage from './pages/WithdrawalsPage'
 import UsersPage from './pages/UsersPage'
 import VolunteersPage from './pages/VolunteersPage'
@@ -19,6 +20,7 @@ import {
 const NAV_ITEMS = [
   { path: '/', label: 'Dashboard', icon: LayoutDashboard, adminOnly: false },
   { path: '/assets', label: 'Store Assets', icon: Package, adminOnly: false },
+  { path: '/events', label: 'Events', icon: Tent, adminOnly: false },
   { path: '/fetes', label: 'Fete Events', icon: Tent, adminOnly: false },
   { path: '/withdrawals', label: 'Withdrawals', icon: ArrowUpFromLine, adminOnly: false },
   { path: '/locations', label: 'Locations', icon: MapPin, adminOnly: true },
@@ -113,6 +115,7 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Dashboard currentUser={currentUser} />} />
             <Route path="/assets" element={<AssetsPage currentUser={currentUser} />} />
+            <Route path="/events" element={<FeteEventsPage currentUser={currentUser} />} />
             <Route path="/fetes" element={<FetesPage currentUser={currentUser} />} />
             <Route path="/withdrawals" element={<WithdrawalsPage currentUser={currentUser} />} />
             <Route path="/locations" element={<LocationsPage currentUser={currentUser} />} />

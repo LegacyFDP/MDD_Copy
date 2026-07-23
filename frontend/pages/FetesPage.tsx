@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import {
   useGetFetes, useSaveFete, useGetWithdrawals,
   useGetFeteVolunteers, useGetUsers,
@@ -197,9 +198,14 @@ export default function FetesPage({ currentUser }: Props) {
           <h1 className="text-2xl font-bold">Fete Events</h1>
           <p className="text-muted-foreground text-sm">Manage events, equipment and volunteers</p>
         </div>
-        <Button onClick={openNewFete} className="flex items-center gap-2">
-          <Plus className="w-4 h-4" /> New Fete
-        </Button>
+        <div className="flex items-center gap-2 flex-wrap justify-end">
+          <Button variant="outline" asChild>
+            <Link to="/events">View overview</Link>
+          </Button>
+          <Button onClick={openNewFete} className="flex items-center gap-2">
+            <Plus className="w-4 h-4" /> New Fete
+          </Button>
+        </div>
       </div>
 
       {fetes.length === 0 && (
